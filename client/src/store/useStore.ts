@@ -2,9 +2,6 @@ import { create } from "zustand";
 import axios from "axios";
 import { toast } from "./toastStore";
 
-// Configure API base URL based on environment
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:3001";
-
 export interface Product {
   ID: number;
   SKU: string;
@@ -69,7 +66,7 @@ export const useStore = create<StoreState>((set, get) => ({
   fetchProducts: async () => {
     set({ isLoading: true });
     try {
-      const response = await axios.get(`${API_BASE_URL}/api/products`);
+      const response = await axios.get("/api/products");
       set({ products: response.data });
     } catch (error) {
       console.error("Failed to fetch products", error);
@@ -82,7 +79,7 @@ export const useStore = create<StoreState>((set, get) => ({
   addProduct: async (product) => {
     set({ isLoading: true });
     try {
-      await axios.post(`${API_BASE_URL}/api/products`, product);
+      await axios.post("/api/products", product);
       await get().fetchProducts();
       get().addLog("SYSTEM", `Product ${product.NAME} added successfully.`);
     } catch (error) {
@@ -97,7 +94,7 @@ export const useStore = create<StoreState>((set, get) => ({
   updateProduct: async (id, product) => {
     set({ isLoading: true });
     try {
-      await axios.put(`${API_BASE_URL}/api/products/${id}`, product);
+      await axios.put(`/api/products/${id}`, product);
       await get().fetchProducts();
       get().addLog("SYSTEM", `Product ${id} updated successfully.`);
     } catch (error) {
@@ -112,7 +109,7 @@ export const useStore = create<StoreState>((set, get) => ({
   deleteProduct: async (id) => {
     set({ isLoading: true });
     try {
-      await axios.delete(`${API_BASE_URL}/api/products/${id}`);
+      await axios.delete(`/api/products/${id}`);
       await get().fetchProducts();
       get().addLog("SYSTEM", `Product ${id} deleted successfully.`);
     } catch (error) {
@@ -165,7 +162,6 @@ export const useStore = create<StoreState>((set, get) => ({
     try {
       for (const item of cart) {
         await axios.post("/api/transactions", {
-            await axios.post(`${API_BASE_URL}/api/transactions`, {
           productId: item.ID,
           quantity: item.quantity,
           soldPrice: item.CURRENT_PRICE,

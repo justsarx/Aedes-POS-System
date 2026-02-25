@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  oracle-db:
+    image: gvenzl/oracle-xe:21-slim
+    container_name: aedes-oracle
+    ports:
+      - "1522:1521"
+    environment:
+      - ORACLE_PASSWORD=password
+      - APP_USER=aedes
+      - APP_USER_PASSWORD=aedes_password
+    volumes:
+      - ./init.sql:/container-entrypoint-initdb.d/init.sql
+      - ./migration.sql:/container-entrypoint-initdb.d/migration.sql
+    healthcheck:
+      test: ["CMD", "sqlplus", "-L", "aedes/aedes_password@//localhost:1521/XEPDB1", "SELECT 1 FROM DUAL"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  server:
+    build: ../server
+    container_name: aedes-server
+    ports:
+      - "3001:3000"
+    environment:
+      - DB_USER=aedes
+      - DB_PASSWORD=aedes_password
+      - DB_CONNECT_STRING=oracle-db:1521/XEPDB1
+    volumes:
+      - ../server:/app
+      - /app/node_modules
+    depends_on:
+      oracle-db:
+        condition: service_healthy

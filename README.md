@@ -113,3 +113,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ---
 
 Made with ❤️ by the **Aedes Team**
+
+---
+
+Note on Node versions:
+
+- The project builds with Node LTS (18 or 20). Avoid using Node 25 in CI or local development — several dependencies (including Vite and some plugins) may not be compatible. If you updated Node to v25 and saw build failures, switch back to Node 18 or 20.
